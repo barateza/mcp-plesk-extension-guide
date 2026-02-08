@@ -7,7 +7,22 @@ on:
     branches: [main]
 
 jobs:
+  check-skip-ci:
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.skip-ci.outputs.skip }}
+    steps:
+      - name: Check for [skip ci] in commit message
+        id: skip-ci
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"[skip ci]"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
   test:
+    needs: check-skip-ci
+    if: needs.check-skip-ci.outputs.skip == 'false'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
