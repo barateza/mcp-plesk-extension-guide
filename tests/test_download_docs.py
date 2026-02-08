@@ -166,3 +166,17 @@ class TestDownloadDocs:
             mock_setup.assert_called_once()
             mock_cleanup.assert_called_once()  # Cleanup is always called
             mock_exit.assert_called_once_with(1)
+
+    @patch('pathlib.Path.unlink', side_effect=Exception('Remove failed'))
+    def test_cleanup_zip_exception_handler(self, mock_unlink, temp_dir, capsys):
+        """Test that cleanup_zip handles exceptions properly and prints warning"""
+        zip_path = temp_dir / 'test.zip'
+        zip_path.touch()
+        
+        with patch('scripts.download_docs.ZIP_FILE', zip_path):
+            # Should not raise exception
+            download_docs.cleanup_zip()
+            
+            # Verify warning message is printed
+            captured = capsys.readouterr()
+            assert "Warning: Could not remove" in captured.out

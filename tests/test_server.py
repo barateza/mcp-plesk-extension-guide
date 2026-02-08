@@ -117,6 +117,66 @@ class TestHTMLParser:
         assert title == "Untitled"
         assert content is None
 
+    def test_parse_html_with_no_tags_to_remove(self, temp_dir):
+        """Test parsing HTML with no tags that should be removed"""
+        test_html = """
+        <html>
+            <head>
+                <title>Test Page — Developing Extensions for Plesk</title>
+            </head>
+            <body>
+                <div itemprop="articleBody">
+                    <h1>Test Content</h1>
+                    <p>This is a test paragraph with no unwanted tags.</p>
+                </div>
+            </body>
+        </html>
+        """
+        
+        test_file = temp_dir / "test_page.htm"
+        test_file.write_text(test_html, encoding="utf-8")
+        
+        title, content = server.parse_sphinx_html(test_file)
+        
+        assert title == "Test Page"
+        assert "Test Content" in content
+        assert "This is a test paragraph with no unwanted tags" in content
+
+    def test_parse_html_with_tags_to_remove(self, temp_dir):
+        """Test parsing HTML with tags that should be removed (covers line 61)"""
+        test_html = """
+        <html>
+            <head>
+                <title>Test Page — Developing Extensions for Plesk</title>
+                <style>body { background: #fff; }</style>
+            </head>
+            <body>
+                <div itemprop="articleBody">
+                    <h1>Test Content</h1>
+                    <p>This is a test paragraph.</p>
+                    <script>console.log('test script');</script>
+                    <nav>Navigation menu</nav>
+                    <footer>Footer content</footer>
+                    <iframe src="https://example.com"></iframe>
+                </div>
+            </body>
+        </html>
+        """
+        
+        test_file = temp_dir / "test_page.htm"
+        test_file.write_text(test_html, encoding="utf-8")
+        
+        title, content = server.parse_sphinx_html(test_file)
+        
+        assert title == "Test Page"
+        assert "Test Content" in content
+        assert "This is a test paragraph" in content
+        assert "console.log('test script')" not in content
+        assert "Navigation menu" not in content
+        assert "Footer content" not in content
+        assert "https://example.com" not in content
+        assert "body { background: #fff; }" not in content
+
 
 class TestServer:
     """Tests for server.py module"""
@@ -144,6 +204,57 @@ class TestServer:
         
         assert "Processed 1 documentation files" in result
         mock_collection.upsert.assert_called_once()
+
+    @patch("server.get_db_client")
+    @patch("server.get_embedding_fn")
+    def test_index_extensions_guide_short_content(self, mock_embedding_fn, mock_db_client, temp_dir):
+        """Test that documents with content < 50 chars are not indexed"""
+        # Create test files with short content
+        (temp_dir / "short_doc.htm").write_text("<html><body>Short content</body></html>", encoding="utf-8")
+        
+        # Mock the collection
+        mock_collection = MagicMock()
+        mock_collection.upsert = MagicMock()
+        
+        # Setup mocks
+        mock_db_instance = MagicMock()
+        mock_db_instance.get_or_create_collection.return_value = mock_collection
+        mock_db_client.return_value = mock_db_instance
+        
+        # Run the indexing
+        with patch("server.DOCS_DIR", temp_dir):
+            result = server.index_extensions_guide()
+        
+        assert "Processed 0 documentation files" in result
+        mock_collection.upsert.assert_not_called()
+
+    @patch("server.get_db_client")
+    @patch("server.get_embedding_fn")
+    def test_index_extensions_guide_with_exception(self, mock_embedding_fn, mock_db_client, temp_dir, capsys):
+        """Test that index_extensions_guide handles exceptions when upserting documents"""
+        # Create test file with content that will be processed
+        test_content = "Test content with enough length to be processed by the indexer."
+        (temp_dir / "doc1.htm").write_text(f"<html><body>{test_content}</body></html>", encoding="utf-8")
+        
+        # Mock the collection to raise an exception
+        mock_collection = MagicMock()
+        mock_collection.upsert.side_effect = Exception("Upsert failed")
+        
+        # Setup mocks
+        mock_db_instance = MagicMock()
+        mock_db_instance.get_or_create_collection.return_value = mock_collection
+        mock_db_client.return_value = mock_db_instance
+        
+        # Run the indexing
+        with patch("server.DOCS_DIR", temp_dir):
+            result = server.index_extensions_guide()
+        
+        assert "Processed 0 documentation files" in result
+        mock_collection.upsert.assert_called_once()
+        
+        # Verify error message is printed
+        captured = capsys.readouterr()
+        assert "Failed to index doc1.htm: Upsert failed" in captured.out
 
     @patch("server.get_db_client")
     @patch("server.get_embedding_fn")
@@ -207,3 +318,14 @@ class TestServer:
         """Test get_embedding_fn without API key"""
         with pytest.raises(ValueError, match="OPENROUTER_API_KEY not found"):
             server.get_embedding_fn()
+
+    def test_get_db_client(self):
+        """Test get_db_client function directly"""
+        with patch("server.chromadb.PersistentClient") as mock_persistent_client:
+            mock_instance = MagicMock()
+            mock_persistent_client.return_value = mock_instance
+            
+            client = server.get_db_client()
+            
+            assert client is mock_instance
+            mock_persistent_client.assert_called_once()
