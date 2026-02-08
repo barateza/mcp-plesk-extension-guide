@@ -24,8 +24,44 @@ dependencies = [
     "openai>=2.16.0",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-mock>=3.12.0",
+]
+
 [project.urls]
-"Homepage" = "https://github.com/yourusername/extensions-guide-mcp"
+"Homepage" = "https://github.com/barateza/mcp-plesk-extension-guide"
 "Documentation" = "https://docs.plesk.com/en-US/obsidian/extensions-guide/"
-"Bug Tracker" = "https://github.com/yourusername/extensions-guide-mcp/issues"
-"Repository" = "https://github.com/yourusername/extensions-guide-mcp.git"
+"Bug Tracker" = "https://github.com/barateza/mcp-plesk-extension-guide/issues"
+"Repository" = "https://github.com/barateza/mcp-plesk-extension-guide.git"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["."]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+precision = 2
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "class.*\\bProtocol\\b",  # Ignore protocol classes
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+title = "extensions-guide"

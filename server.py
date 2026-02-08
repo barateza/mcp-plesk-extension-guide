@@ -54,20 +54,23 @@ def parse_sphinx_html(file_path):
         # Fallback if specific tag isn't found
         if not main_content:
             main_content = soup.body
+        
+        if main_content:
+            # 3. Clean up noise (scripts, styles, nav links)
+            for tag in main_content(["script", "style", "nav", "footer", "iframe"]):
+                tag.decompose()
 
-        # 3. Clean up noise (scripts, styles, nav links)
-        for tag in main_content(["script", "style", "nav", "footer", "iframe"]):
-            tag.decompose()
-
-        text = main_content.get_text(separator="\n", strip=True)
+            text = main_content.get_text(separator="\n", strip=True)
+        else:
+            text = None
+            
         return title, text
     except Exception as e:
         print(f"Error parsing {file_path.name}: {e}")
-        return None, None
+        return "Untitled", None
 
 # --- Tool 1: Indexing ---
 
-@mcp.tool
 def index_extensions_guide():
     """
     Scans the local folder (and subfolders) for .htm files.
@@ -104,7 +107,6 @@ def index_extensions_guide():
 
 # --- Tool 2: Search ---
 
-@mcp.tool
 def search_extensions_guide(query: str):
     """
     Searches the Plesk Extensions Guide (Concepts, How-Tos, Tutorials).
@@ -126,6 +128,10 @@ def search_extensions_guide(query: str):
             output.append(f"=== DOC: {title} ({filename}) ===\n{doc}\n")
     
     return "\n".join(output) if output else "No relevant documentation found."
+
+# Register tools with MCP
+mcp.tool(index_extensions_guide)
+mcp.tool(search_extensions_guide)
 
 if __name__ == "__main__":
     mcp.run()
