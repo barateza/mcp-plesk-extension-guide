@@ -5,7 +5,6 @@
 [![MCP](https://img.shields.io/badge/MCP-Server-brightgreen.svg)](https://modelcontextprotocol.io/)
 [![Works on my machine](https://img.shields.io/badge/works%20on-my%20machine-brightgreen.svg?style=flat)](https://github.com/barateza/extensions-guide)
 [![Tests](https://github.com/barateza/extensions-guide/actions/workflows/tests.yml/badge.svg)](https://github.com/barateza/extensions-guide/actions/workflows/tests.yml)
-[![Coverage](https://codecov.io/gh/barateza/extensions-guide/branch/main/graph/badge.svg)](https://codecov.io/gh/barateza/extensions-guide)
 
 A Model Context Protocol (MCP) server that provides semantic search capabilities over the Plesk Extensions Guide documentation using Retrieval-Augmented Generation (RAG).
 
@@ -24,7 +23,7 @@ This MCP server indexes and searches Plesk extension development documentation u
 ## Prerequisites
 
 - Python 3.12 or higher
-- `pip` package manager
+- `uv` package manager (or pip)
 - `OPENROUTER_API_KEY` environment variable (for embeddings)
 
 ## Installation
@@ -37,7 +36,7 @@ This MCP server indexes and searches Plesk extension development documentation u
 
 2. **Create a virtual environment**:
    ```bash
-   python -m venv .venv
+   uv venv
    source .venv/bin/activate  # macOS/Linux
    # OR
    .venv\Scripts\activate  # Windows
@@ -45,7 +44,7 @@ This MCP server indexes and searches Plesk extension development documentation u
 
 3. **Install dependencies**:
    ```bash
-   pip install -e .
+   uv pip install -e .[dev]
    ```
 
 ## Setup
@@ -55,7 +54,7 @@ This MCP server indexes and searches Plesk extension development documentation u
 The MCP server requires the Plesk Extensions Guide documentation. Download and extract it using the provided script:
 
 ```bash
-python scripts/download_docs.py
+uv run python scripts/download_docs.py
 ```
 
 This script will:
@@ -122,19 +121,19 @@ The server uses the following environment variables:
 ### Running Tests
 
 ```bash
-python -m pytest tests/ -v --tb=short
+uv run pytest tests/ -v --tb=short
 ```
 
 ### Coverage Reports
 
 ```bash
-python -m pytest tests/ -v --tb=short --cov-report term-missing --cov=.
+uv run pytest tests/ -v --tb=short --cov-report term-missing --cov=.
 ```
 
 ### HTML Coverage Report
 
 ```bash
-python -m pytest tests/ -v --tb=short --cov-report html --cov=.
+uv run pytest tests/ -v --tb=short --cov-report html --cov=.
 open htmlcov/index.html
 ```
 

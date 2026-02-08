@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 authors = [
     { name = "Your Name", email = "your.email@example.com" }
 ]
-license = { text = "MIT" }
+license = "MIT"
 keywords = ["mcp", "plesk", "extensions", "rag", "semantic-search", "documentation"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -37,6 +37,18 @@ dev = [
 "Documentation" = "https://docs.plesk.com/en-US/obsidian/extensions-guide/"
 "Bug Tracker" = "https://github.com/barateza/mcp-plesk-extension-guide/issues"
 "Repository" = "https://github.com/barateza/mcp-plesk-extension-guide.git"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*.py"]
+exclude = ["tests"]
+
+[tool.setuptools.package-data]
+"*" = ["*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
