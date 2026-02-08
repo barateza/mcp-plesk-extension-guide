@@ -1,0 +1,31 @@
+[project]
+name = "extensions-guide"
+version = "0.1.0"
+description = "MCP server for semantic search over Plesk Extensions Guide documentation using RAG"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+license = { text = "MIT" }
+keywords = ["mcp", "plesk", "extensions", "rag", "semantic-search", "documentation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "chromadb>=1.4.1",
+    "fastmcp>=2.14.5",
+    "openai>=2.16.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yourusername/extensions-guide-mcp"
+"Documentation" = "https://docs.plesk.com/en-US/obsidian/extensions-guide/"
+"Bug Tracker" = "https://github.com/yourusername/extensions-guide-mcp/issues"
+"Repository" = "https://github.com/yourusername/extensions-guide-mcp.git"
