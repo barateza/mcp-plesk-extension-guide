@@ -23,8 +23,8 @@ This MCP server indexes and searches Plesk extension development documentation u
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/extensions-guide-mcp.git
-   cd extensions-guide-mcp
+   git clone https://github.com/barateza/mcp-plesk-extension-guide.git
+   cd mcp-plesk-extension-guide
    ```
 
 2. **Create a virtual environment**:
