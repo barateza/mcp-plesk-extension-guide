@@ -10,12 +10,18 @@ assignees: ''
 
 A clear and concise description of the problem you're trying to solve or the use case this feature would address.
 
+For example:
+- Current search limitations
+- Documentation retrieval challenges
+- Integration needs
+
 ## Proposed Solution
 
 A clear and concise description of what you want to happen. Include:
-- How the feature would work
-- Any API changes or new endpoints
-- UI/UX considerations
+- How the feature would improve search/RAG capabilities
+- Query types or filtering options needed
+- Any new MCP resources or tools required
+- Impact on vector embeddings or indexing
 
 ## Alternatives Considered
 
@@ -24,10 +30,12 @@ A clear and concise description of any alternative solutions or features you've 
 ## Implementation Notes
 
 If you have thoughts on implementation:
-- Technical approach
-- Dependencies that might be needed
-- Breaking changes
-- Migration path
+- Affects search indexing/embeddings? (yes/no/maybe)
+- Affects MCP tools or resources? (yes/no/maybe)
+- New OpenRouter API requirements?
+- Breaking changes to existing search behavior?
+- ChromaDB schema changes needed?
+- Documentation indexing changes needed?
 
 ## Additional Context
 
