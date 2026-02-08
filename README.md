@@ -1,5 +1,10 @@
 # Plesk Extensions Guide MCP Server
 
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![MCP](https://img.shields.io/badge/MCP-Server-brightgreen.svg)](https://modelcontextprotocol.io/)
+[![Works on my machine](https://img.shields.io/badge/works%20on-my%20machine-brightgreen.svg?style=flat)](https://github.com/barateza/mcp-plesk-extension-guide)
+
 A Model Context Protocol (MCP) server that provides semantic search capabilities over the Plesk Extensions Guide documentation using Retrieval-Augmented Generation (RAG).
 
 ## Overview
